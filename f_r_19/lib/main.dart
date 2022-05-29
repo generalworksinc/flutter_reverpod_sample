@@ -39,10 +39,12 @@ class MyHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
     return ref.watch(githubUserProvider).when(
         data: (user) {
           return RefreshIndicator(
-            onRefresh: () => ref.refresh(githubUserProvider.future),
+            //onRefresh: () => ref.refresh(githubUserProvider.future), //この例は間違い。ここにonRefreshの使い方イマイチ分かってない
+            onRefresh: () => Future.value(0), //onRefreshを使ってない。この例では単純にuserNameの変更を、FutureProviderがwatchしてリロードしてるだけ。onRefreshの使い方イマイチ分かってない。
             child: Scaffold(
               body: ListView(
                 padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
@@ -58,11 +60,14 @@ class MyHomePage extends ConsumerWidget {
                   ListTile(
                     title: const Text('html_url'),
                     subtitle: Text('${user['html_url'] ?? 'none'}'),
-                  )
+                  ),
                 ],
               ),
               floatingActionButton: FloatingActionButton(
-                onPressed: () => ref.read(userNameProvider.notifier).update((state) => 'flutter'),
+                onPressed: () {
+                  //ユーザーを更新する
+                  ref.read(userNameProvider.notifier).update((state) => 'flutter');
+                },
               ),
             ),
           );
